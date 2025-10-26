@@ -1,0 +1,152 @@
+/* 企业信用评估系统 - 自定义样式 */
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    font-family: 'Microsoft YaHei', sans-serif;
+}
+
+.card {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 25px;
+    padding: 10px 30px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+}
+
+.navbar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+.form-control {
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    background: rgba(255, 255, 255, 1);
+}
+
+/* 拖拽上传区域样式 */
+.drag-drop-area {
+    border: 3px dashed #667eea;
+    border-radius: 15px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.drag-drop-area:hover {
+    border-color: #764ba2;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.drag-drop-area.dragover {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.1);
+}
+
+/* 进度条样式 */
+.progress {
+    height: 25px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.progress-bar {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border-radius: 15px;
+}
+
+/* 数据卡片样式 */
+.data-card {
+    background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    border-left: 4px solid #667eea;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.data-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* 评级样式 */
+.rating-excellent {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.rating-good {
+    color: #17a2b8;
+    font-weight: bold;
+}
+
+.rating-fair {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.rating-poor {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .card {
+        margin: 10px;
+    }
+    
+    .btn-primary {
+        padding: 8px 20px;
+        font-size: 14px;
+    }
+    
+    .drag-drop-area {
+        padding: 20px;
+    }
+}

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业信用评估系统 - PDF上传</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        .upload-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            background: #f8f9ff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #e8ecff;
+            transform: scale(1.02);
+        }
+        .upload-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .btn-upload {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .progress-container {
+            display: none;
+            margin-top: 30px;
+        }
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+        }
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+        .features {
+            margin-top: 40px;
+        }
+        .feature-card {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .feature-icon {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-chart-line me-2"></i>企业信用评估系统
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <i class="fas fa-user me-1"></i>欢迎，{{ session.get('username', '用户') }}
+                </span>
+                <a class="nav-link" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt me-1"></i>登出
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="upload-container">
+            <div class="text-center mb-4">
+                <h2><i class="fas fa-file-upload me-2"></i>PDF文件上传</h2>
+                <p class="text-muted">上传企业财务报告PDF文件，系统将自动提取财务数据并进行信用评估</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- 上传区域 -->
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h4>拖拽PDF文件到此处</h4>
+                <p class="text-muted">或者点击选择文件</p>
+                <input type="file" id="fileInput" accept=".pdf" style="display: none;">
+                <button type="button" class="btn btn-primary btn-upload" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-folder-open me-2"></i>选择PDF文件
+                </button>
+            </div>
+
+            <!-- 文件信息 -->
+            <div class="file-info" id="fileInfo">
+                <h6><i class="fas fa-file-pdf me-2"></i>已选择文件</h6>
+                <p id="fileName" class="mb-2"></p>
+                <button type="button" class="btn btn-success btn-upload" id="processBtn">
+                    <i class="fas fa-cogs me-2"></i>开始处理
+                </button>
+            </div>
+
+            <!-- 进度条 -->
+            <div class="progress-container" id="progressContainer">
+                <h6><i class="fas fa-spinner fa-spin me-2"></i>正在处理中...</h6>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" style="width: 0%" id="progressBar"></div>
+                </div>
+                <p class="text-muted mt-2" id="progressText">正在上传PDF到KIMI...</p>
+            </div>
+
+            <!-- 功能特点 -->
+            <div class="features">
+                <h4 class="mb-4"><i class="fas fa-star me-2"></i>系统功能</h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-file-text"></i>
+                            </div>
+                            <h6>PDF直接分析</h6>
+                            <p class="text-muted">直接上传PDF到KIMI API进行智能分析</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h6>AI智能分析</h6>
+                            <p class="text-muted">使用KIMI API智能提取财务指标和评级信息</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h6>信用评估</h6>
+                            <p class="text-muted">基于财务数据自动生成企业信用评级报告</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const processBtn = document.getElementById('processBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+
+        let selectedFile = null;
+
+        // 拖拽上传
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // 文件选择
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.name.toLowerCase().endsWith('.pdf')) {
+                alert('请选择PDF文件！');
+                return;
+            }
+
+            selectedFile = file;
+            fileName.textContent = `文件名: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            fileInfo.style.display = 'block';
+        }
+
+        // 处理文件
+        processBtn.addEventListener('click', async () => {
+            if (!selectedFile) {
+                alert('请先选择PDF文件！');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            // 显示进度条
+            progressContainer.style.display = 'block';
+            fileInfo.style.display = 'none';
+
+            try {
+                const response = await fetch('/process_pdf', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    progressText.textContent = '处理完成！正在跳转...';
+                    progressBar.style.width = '100%';
+                    
+                    setTimeout(() => {
+                        window.location.href = `/analysis_result/${result.session_id}`;
+                    }, 1000);
+                } else {
+                    alert('处理失败: ' + result.error);
+                    progressContainer.style.display = 'none';
+                    fileInfo.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                alert('处理失败: ' + error.message);
+                progressContainer.style.display = 'none';
+                fileInfo.style.display = 'block';
+            }
+        });
+
+        // 模拟进度更新
+        function updateProgress(step) {
+            const steps = [
+                '正在上传PDF到KIMI...',
+                '正在调用KIMI API分析...',
+                '正在提取财务数据...',
+                '正在生成分析结果...'
+            ];
+            
+            const progress = (step + 1) * 25;
+            progressBar.style.width = progress + '%';
+            progressText.textContent = steps[step] || '处理完成';
+            
+            if (step < steps.length - 1) {
+                setTimeout(() => updateProgress(step + 1), 2000);
+            }
+        }
+
+        // 开始进度更新
+        processBtn.addEventListener('click', () => {
+            updateProgress(0);
+        });
+    </script>
+</body>
+</html>

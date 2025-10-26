@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业信用评估报告</title>
+    <style>
+        body {
+            font-family: 'Arial', 'SimSun', sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: white;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .report-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .header h2 {
+            color: #7f8c8d;
+            margin: 10px 0 0 0;
+            font-size: 18px;
+            font-weight: normal;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        
+        .info-table th, .info-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        
+        .info-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+            width: 30%;
+        }
+        
+        .info-table td {
+            background-color: white;
+        }
+        
+        .score-highlight {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .rating-box {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            margin: 5px 0;
+        }
+        
+        .rating-aaa { background-color: #27ae60; }
+        .rating-aa { background-color: #2ecc71; }
+        .rating-a { background-color: #f39c12; }
+        .rating-bbb { background-color: #e67e22; }
+        .rating-bb { background-color: #d35400; }
+        .rating-b { background-color: #c0392b; }
+        .rating-ccc { background-color: #8e44ad; }
+        
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 12px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        .financial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .financial-category {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #fafafa;
+        }
+        
+        .category-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .financial-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .financial-item:last-child {
+            border-bottom: none;
+        }
+        
+        .financial-label {
+            font-weight: 500;
+            color: #34495e;
+        }
+        
+        .financial-value {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .summary-text {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+            font-style: italic;
+            line-height: 1.8;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        .action-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .action-button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .action-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .save-button {
+            background-color: #27ae60;
+        }
+        
+        .save-button:hover {
+            background-color: #229954;
+        }
+        
+        @media print {
+            .action-buttons {
+                display: none;
+            }
+            
+            .report-container {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 0;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <div class="header">
+            <h1>企业信用评估报告</h1>
+            <h2>Enterprise Credit Assessment Report</h2>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="action-button save-button" onclick="saveAsImage()">📸 保存为图片</button>
+            <button class="action-button" onclick="window.print()">🖨️ 打印报告</button>
+        </div>
+        
+        {% if analysis_data and analysis_data.extracted_data %}
+        <div class="section">
+            <div class="section-title">基本信息 / Basic Information</div>
+            <table class="info-table">
+                <tr>
+                    <th>公司名称 / Company Name</th>
+                    <td>{{ analysis_data.extracted_data.get('Name', 'N/A') }}</td>
+                </tr>
+                <tr>
+                    <th>股票代码 / Stock Symbol</th>
+                    <td>{{ analysis_data.extracted_data.get('Symbol', 'N/A') }}</td>
+                </tr>
+                <tr>
+                    <th>原始信用评级 / Original Credit Rating</th>
+                    <td>{{ analysis_data.extracted_data.get('Rating', 'N/A') }}</td>
+                </tr>
+                <tr>
+                    <th>评级机构 / Rating Agency</th>
+                    <td>{{ analysis_data.extracted_data.get('Rating Agency Name', 'N/A') }}</td>
+                </tr>
+                <tr>
+                    <th>评级日期 / Rating Date</th>
+                    <td>{{ analysis_data.extracted_data.get('Date', 'N/A') }}</td>
+                </tr>
+                <tr>
+                    <th>所属行业 / Sector</th>
+                    <td>{{ analysis_data.extracted_data.get('Sector', 'N/A') }}</td>
+                </tr>
+            </table>
+        </div>
+        {% endif %}
+        
+        {% if evaluation_data and evaluation_data.success %}
+        <div class="section">
+            <div class="section-title">信用评估结果 / Credit Assessment Results</div>
+            
+            <div class="score-highlight">
+                信用评分: {{ evaluation_data.get('credit_score', 'N/A') }}/100
+            </div>
+            
+            <table class="info-table">
+                <tr>
+                    <th>信用等级 / Credit Rating</th>
+                    <td>
+                        <span class="rating-box rating-{{ evaluation_data.get('credit_rating', '').lower() }}">
+                            {{ evaluation_data.get('credit_rating', 'N/A') }}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>风险等级 / Risk Level</th>
+                    <td>{{ evaluation_data.get('risk_level', 'N/A') }}</td>
+                </tr>
+                <tr>
+                    <th>评估日期 / Assessment Date</th>
+                    <td>{{ evaluation_data.get('evaluation_date', 'N/A') }}</td>
+                </tr>
+                {% if evaluation_data.get('confidence') %}
+                <tr>
+                    <th>置信度 / Confidence</th>
+                    <td>{{ evaluation_data.confidence }}%</td>
+                </tr>
+                {% endif %}
+                {% if evaluation_data.get('model_type') %}
+                <tr>
+                    <th>评估模型 / Model Type</th>
+                    <td>{{ evaluation_data.model_type }}</td>
+                </tr>
+                {% endif %}
+            </table>
+            
+            {% if evaluation_data.get('warning') %}
+            <div class="warning">
+                <strong>注意 / Warning:</strong> {{ evaluation_data.warning }}
+            </div>
+            {% endif %}
+            
+            {% if evaluation_data.get('analysis_summary') %}
+            <div class="section-title">分析摘要 / Analysis Summary</div>
+            <div class="summary-text">
+                {{ evaluation_data.analysis_summary }}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        {% if analysis_data and analysis_data.extracted_data %}
+        <div class="section">
+            <div class="section-title">财务指标详情 / Financial Indicators</div>
+            
+            <div class="financial-grid">
+                <div class="financial-category">
+                    <div class="category-title">流动性指标 / Liquidity Ratios</div>
+                    {% for indicator in ['currentRatio', 'quickRatio', 'cashRatio', 'daysOfSalesOutstanding'] %}
+                        {% if analysis_data.extracted_data.get(indicator) and analysis_data.extracted_data[indicator] not in ['N/A', '', None] %}
+                        <div class="financial-item">
+                            <span class="financial-label">{{ indicator }}</span>
+                            <span class="financial-value">{{ analysis_data.extracted_data[indicator] }}</span>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                
+                <div class="financial-category">
+                    <div class="category-title">盈利能力指标 / Profitability Ratios</div>
+                    {% for indicator in ['netProfitMargin', 'pretaxProfitMargin', 'grossProfitMargin', 'operatingProfitMargin'] %}
+                        {% if analysis_data.extracted_data.get(indicator) and analysis_data.extracted_data[indicator] not in ['N/A', '', None] %}
+                        <div class="financial-item">
+                            <span class="financial-label">{{ indicator }}</span>
+                            <span class="financial-value">{{ analysis_data.extracted_data[indicator] }}</span>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                
+                <div class="financial-category">
+                    <div class="category-title">回报率指标 / Return Ratios</div>
+                    {% for indicator in ['returnOnAssets', 'returnOnCapitalEmployed', 'returnOnEquity'] %}
+                        {% if analysis_data.extracted_data.get(indicator) and analysis_data.extracted_data[indicator] not in ['N/A', '', None] %}
+                        <div class="financial-item">
+                            <span class="financial-label">{{ indicator }}</span>
+                            <span class="financial-value">{{ analysis_data.extracted_data[indicator] }}</span>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                
+                <div class="financial-category">
+                    <div class="category-title">杠杆指标 / Leverage Ratios</div>
+                    {% for indicator in ['debtEquityRatio', 'debtRatio', 'companyEquityMultiplier'] %}
+                        {% if analysis_data.extracted_data.get(indicator) and analysis_data.extracted_data[indicator] not in ['N/A', '', None] %}
+                        <div class="financial-item">
+                            <span class="financial-label">{{ indicator }}</span>
+                            <span class="financial-value">{{ analysis_data.extracted_data[indicator] }}</span>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                
+                <div class="financial-category">
+                    <div class="category-title">现金流指标 / Cash Flow Ratios</div>
+                    {% for indicator in ['freeCashFlowOperatingCashFlowRatio', 'freeCashFlowPerShare', 'operatingCashFlowPerShare'] %}
+                        {% if analysis_data.extracted_data.get(indicator) and analysis_data.extracted_data[indicator] not in ['N/A', '', None] %}
+                        <div class="financial-item">
+                            <span class="financial-label">{{ indicator }}</span>
+                            <span class="financial-value">{{ analysis_data.extracted_data[indicator] }}</span>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="footer">
+            <p>原始文件: {{ filename or 'N/A' }}</p>
+            <p>报告生成时间: {{ generated_time }}</p>
+            <p>企业信用管理系统 Enterprise Credit Management System</p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script>
+        // 自动调整评级颜色
+        document.addEventListener('DOMContentLoaded', function() {
+            const ratingBoxes = document.querySelectorAll('.rating-box');
+            ratingBoxes.forEach(box => {
+                const rating = box.textContent.trim().toLowerCase();
+                box.className = 'rating-box rating-' + rating;
+            });
+        });
+        
+        // 保存为图片功能
+        async function saveAsImage() {
+            try {
+                // 隐藏按钮
+                const buttons = document.querySelector('.action-buttons');
+                buttons.style.display = 'none';
+                
+                // 获取报告容器
+                const reportContainer = document.querySelector('.report-container');
+                
+                // 生成canvas
+                const canvas = await html2canvas(reportContainer, {
+                    scale: 2, // 提高分辨率
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    width: reportContainer.scrollWidth,
+                    height: reportContainer.scrollHeight
+                });
+                
+                // 创建下载链接
+                const link = document.createElement('a');
+                link.download = `企业信用评估报告_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.jpg`;
+                
+                // 将canvas转换为JPG格式
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    link.href = url;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    
+                    // 显示成功消息
+                    alert('✅ 报告已保存为图片！');
+                }, 'image/jpeg', 0.95);
+                
+            } catch (error) {
+                console.error('保存图片时出错:', error);
+                alert('❌ 保存失败，请尝试使用浏览器的截图功能');
+            } finally {
+                // 重新显示按钮
+                const buttons = document.querySelector('.action-buttons');
+                buttons.style.display = 'block';
+            }
+        }
+        
+        // 备用方案：使用浏览器截图API（如果支持）
+        async function saveAsImageFallback() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+                try {
+                    const stream = await navigator.mediaDevices.getDisplayMedia({ 
+                        video: { mediaSource: 'screen' } 
+                    });
+                    
+                    alert('📸 请选择当前浏览器窗口进行截图，然后保存图片');
+                    
+                    // 停止流
+                    stream.getTracks().forEach(track => track.stop());
+                } catch (error) {
+                    alert('🔧 请使用浏览器的"右键 → 截图"功能或按 Ctrl+Shift+S 截图保存');
+                }
+            } else {
+                alert('💡 请使用以下方式保存图片：\n1. 按 F12 打开开发者工具\n2. 按 Ctrl+Shift+P\n3. 输入 "screenshot"\n4. 选择 "Capture full size screenshot"');
+            }
+        }
+    </script>
+</body>
+</html>
